@@ -7,6 +7,7 @@ import { GestionProductoComponent } from './admin/gestion-producto/gestion-produ
 import { IniciarSesionComponent } from './auth/login/iniciar-sesion/iniciar-sesion.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
+import { CatalogoComponent } from './comprador/catalogo/catalogo.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { RegisterComponent } from './auth/register/register.component';
     GestionProductoComponent,
     IniciarSesionComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    CatalogoComponent
   ],
   imports: [
     BrowserModule,
