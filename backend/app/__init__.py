@@ -1,7 +1,7 @@
 from flask import Flask
 from .config import Config
 from .models import db
-from .routes import app
+from .routes import init_routes
 from flask_migrate import Migrate
 from flask_cors import CORS
 
@@ -15,9 +15,5 @@ def create_app():
 
     with app.app_context():
         db.create_all()
-
+    init_routes(app)
     return app
-
-if __name__ == "__main__":
-    app = create_app()
-    app.run(debug=True)

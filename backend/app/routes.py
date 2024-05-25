@@ -9,8 +9,9 @@ from flask_bcrypt import check_password_hash
 import jwt
 
 
-app=Flask(__name__)
-
+main=Blueprint('main',__name__)
+def init_routes(app):
+    app.register_blueprint(main)
 def vendedor_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -32,7 +33,7 @@ def admin_required(f):
 
 
 #login cliente
-@app.route('/cliente/register', methods=['POST'])
+@main.route('/cliente/register', methods=['POST'])
 def register_cliente():
     data = request.json
     nombre = data.get('nombre')
@@ -54,7 +55,7 @@ def register_cliente():
 
 
 # Inicio de sesión de cliente
-@app.route('/cliente/login', methods=['POST'])
+@main.route('/cliente/login', methods=['POST'])
 def login_cliente():
     data = request.json
     email = data.get('email')
@@ -106,7 +107,7 @@ def delete_venta(venta_id):
 
 
 # Crear un producto
-@app.route('/producto/crear', methods=['POST'])
+@main.route('/producto/crear', methods=['POST'])
 @vendedor_required
 def crear_producto():
     data = request.json
@@ -123,20 +124,20 @@ def crear_producto():
     return jsonify({"message": "Producto creado exitosamente"}), 201
 
 # Obtener todos los productos
-@app.route('/listarproducto', methods=['GET'])
+@main.route('/listarproducto', methods=['GET'])
 def obtener_productos():
     productos = Producto.query.all()
     resultados = [serialize_producto(producto) for producto in productos]
     return jsonify(resultados)
 
 # Obtener un producto por su ID
-@app.route('/producto/<int:id>', methods=['GET'])
+@main.route('/producto/<int:id>', methods=['GET'])
 def obtener_producto(id):
     producto = Producto.query.get_or_404(id)
     return jsonify(serialize_producto(producto))
 
 # Actualizar un producto
-@app.route('/producto/<int:id>', methods=['PUT'])
+@main.route('/producto/<int:id>', methods=['PUT'])
 @vendedor_required
 def actualizar_producto(id):
     producto = Producto.query.get_or_404(id)
@@ -150,7 +151,7 @@ def actualizar_producto(id):
     return jsonify({"message": "Producto actualizado exitosamente"})
 
 # Eliminar un producto
-@app.route('/producto/<int:id>', methods=['DELETE'])
+@main.route('/producto/<int:id>', methods=['DELETE'])
 @vendedor_required
 def eliminar_producto(id):
     producto = Producto.query.get_or_404(id)
@@ -165,7 +166,7 @@ def eliminar_producto(id):
 
 
 # Registro de un vendedor
-@app.route('/vendedor/registro', methods=['POST'])
+@main.route('/vendedor/registro', methods=['POST'])
 def register_vendedor():
     data = request.json
     nuevo_vendedor = Vendedor(
@@ -179,7 +180,7 @@ def register_vendedor():
     return jsonify({"message": "Vendedor registrado exitosamente"}), 201
 
 # Inicio de sesión de un vendedor
-@app.route('/vendedor/login', methods=['POST'])
+@main.route('/vendedor/login', methods=['POST'])
 def login_vendedor():
     data = request.json
     email = data.get('email')
@@ -202,7 +203,7 @@ def login_vendedor():
 
 
 
-@app.route('/sucursal/crear', methods=['POST'])
+@main.route('/sucursal/crear', methods=['POST'])
 def crear_sucursal():
     data = request.json
     nueva_sucursal = Sucursal(
@@ -219,7 +220,7 @@ def crear_sucursal():
     return jsonify({"message": "Sucursal creada exitosamente"}), 201
 
 # Obtener todas las sucursales
-@app.route('/sucursal', methods=['GET'])
+@main.route('/sucursal', methods=['GET'])
 def obtener_sucursales():
     sucursales = Sucursal.query.all()
     resultados = []
@@ -237,7 +238,7 @@ def obtener_sucursales():
     return jsonify(resultados)
 
 # Obtener una sucursal por su ID
-@app.route('/sucursal/<int:id>', methods=['GET'])
+@main.route('/sucursal/<int:id>', methods=['GET'])
 def obtener_sucursal(id):
     sucursal = Sucursal.query.get_or_404(id)
     return jsonify({
@@ -252,7 +253,7 @@ def obtener_sucursal(id):
     })
 
 # Actualizar una sucursal
-@app.route('/sucursal/<int:id>', methods=['PUT'])
+@main.route('/sucursal/<int:id>', methods=['PUT'])
 def actualizar_sucursal(id):
     sucursal = Sucursal.query.get_or_404(id)
     data = request.json
@@ -267,7 +268,7 @@ def actualizar_sucursal(id):
     return jsonify({"message": "Sucursal actualizada exitosamente"})
 
 # Eliminar una sucursal
-@app.route('/sucursal/<int:id>', methods=['DELETE'])
+@main.route('/sucursal/<int:id>', methods=['DELETE'])
 def eliminar_sucursal(id):
     sucursal = Sucursal.query.get_or_404(id)
     db.session.delete(sucursal)
