@@ -1,27 +1,18 @@
 import os
 from flask import Flask, render_template, request, url_for, redirect
 from flask_sqlalchemy import SQLAlchemy
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import event, DDL
 from datetime import datetime
 from flask_bcrypt import generate_password_hash, check_password_hash
-from sqlalchemy.sql import func
-
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-db = SQLAlchemy()
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://administrador:NCPgatauFcE4HfYylftN8tX7YAyfNbSv@dpg-cp74hngl6cac7386tmmg-a.oregon-postgres.render.com/ferremas_6a85'
 db = SQLAlchemy(app)
 
-
-
 @app.route("/flask", methods=['GET'])
 def index():
     return "Flask server"
-
-if __name__ == "__main__":
-    app.run(port=500, debug=True)
-
 
 class Venta(db.Model):
     __tablename__ = 'venta'
@@ -43,7 +34,7 @@ class Producto(db.Model):
 
 class HistorialPrecioProducto(db.Model):
     __tablename__ = 'historial_precios_producto'
-    id_historial_precio = db.Column(db.Integer, primary_key=True)
+    id_historial_precio = db.Column(db.Integer, primary_key=True, autoincrement=True)
     id_producto = db.Column(db.Integer, db.ForeignKey('producto.id_producto'))
     precio_anterior = db.Column(db.Numeric(10, 2), nullable=False)
     precio_nuevo = db.Column(db.Numeric(10, 2), nullable=False)
@@ -51,7 +42,6 @@ class HistorialPrecioProducto(db.Model):
 
 class Inventario(db.Model):
     __tablename__ = 'inventario'
-
     id_inventario = db.Column(db.Integer, primary_key=True)
     id_producto = db.Column(db.Integer, db.ForeignKey('producto.id_producto'), nullable=False)
     id_sucursal = db.Column(db.Integer, db.ForeignKey('sucursal.id_sucursal'), nullable=False)
@@ -59,15 +49,14 @@ class Inventario(db.Model):
 
 class Cliente(db.Model):
     __tablename__ = 'cliente'
-
     id_cliente = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False, unique=True)
     password = db.Column(db.String(128), nullable=False)
     rol_id = db.Column(db.Integer, db.ForeignKey('rol.id'), nullable=False)
+
 class Rol(db.Model):
     __tablename__ = 'rol'
-
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(50), nullable=False, unique=True)
 
@@ -76,7 +65,6 @@ class Rol(db.Model):
 
 class Sucursal(db.Model):
     __tablename__ = 'sucursal'
-
     id_sucursal = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
     direccion = db.Column(db.String(255), nullable=False)
@@ -90,7 +78,6 @@ class Sucursal(db.Model):
 
 class Vendedor(db.Model):
     __tablename__ = 'vendedor'
-
     id_vendedor = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False)
@@ -109,3 +96,4 @@ class Vendedor(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
