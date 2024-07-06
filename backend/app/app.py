@@ -3,7 +3,7 @@ import json
 import urllib.request
 from flask import Flask, render_template, request, url_for, redirect, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import event, DDL, Column, Integer, String, Numeric, DateTime, func
+from sqlalchemy import event, DDL, Column, Integer, String, Numeric, DateTime, func, Enum, ForeignKey
 from datetime import datetime
 from flask_bcrypt import generate_password_hash, check_password_hash
 
@@ -93,6 +93,16 @@ class Chat(db.Model):
     mensaje = db.Column(db.String(100), nullable=False)
     rol = db.Column(db.Integer, db.ForeignKey('rol.id'))
     id_chat = db.Column(db.Numeric(10, 2), nullable=False)
+
+
+class Promocion(db.Model):
+    __tablename__ = 'promocion'
+
+    id_promocion = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id_producto = db.Column(db.Integer, ForeignKey('producto.id_producto'), nullable=False)
+    tipo_promocion = db.Column(db.Enum('promocion', 'lanzamiento',name='tipo_promocion_enum'), nullable=False)
+    fecha_inicio = db.Column(db.DateTime, nullable=False)
+    fecha_fin = db.Column(db.DateTime, nullable=False)
 
 
 class TasaCambio(db.Model):
